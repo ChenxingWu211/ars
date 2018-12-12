@@ -356,9 +356,9 @@ is_concave = function(start_point, h_x, end_point) {
 #' @source Gilks, W. R. and Wild, P. (1992) Adaptive Rejection Sampling for Gibbs Sampling. Appl.Statist., 41 337 - 348.
 #' @export
 #' @examples
-#' ARS(dnorm, 100, l_bound = -10, u_bound = 10)
+#' ars(dnorm, 100, l_bound = -10, u_bound = 10)
 #' 
-ARS = function(fx, n, sp = NA, l_bound = -Inf, u_bound = Inf) {
+ars = function(fx, n, sp = NA, l_bound = -Inf, u_bound = Inf) {
   # Check if inputs are valid
   
   if (!is.function(fx)) {
