@@ -1,3 +1,5 @@
+# load the source code of the functions to be tested
+source("../../../R/ars.R")
 
 # context("Tests make_h_x")
 context("Tests make_h_x")
