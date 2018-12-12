@@ -1,6 +1,9 @@
 library(pracma)
 library(RGeode)
 
+# This function takes a function and wraps it to be the log of the original function
+# Input: f_x: A function to be calculated
+# A wrapper function to access the logged function
 make_hx = function(f_x){
   h_x = function(x){
     log(f_x(x))
