@@ -18,7 +18,7 @@ ars(fx, n, sp = NA, l_bound = -Inf, u_bound = Inf)
 
 \item{l_bound}{Value for lower bound. Needs to be a number. Defaults to -Inf.}
 
-\item{l_bound}{Value for upper bound. Needs to be a number. Defaults to Inf.}
+\item{u_bound}{Value for upper bound. Needs to be a number. Defaults to Inf.}
 }
 \value{
 A vector of samples from f(x).

@@ -351,7 +351,7 @@ is_concave = function(start_point, h_x, end_point) {
 #' @param n Number of samples. Needs to be an integer.
 #' @param sp Vector of Starting points. Needs to be at least length 2. Default to NA.
 #' @param l_bound Value for lower bound. Needs to be a number. Defaults to -Inf.
-#' @param l_bound Value for upper bound. Needs to be a number. Defaults to Inf.
+#' @param u_bound Value for upper bound. Needs to be a number. Defaults to Inf.
 #' @return A vector of samples from f(x).
 #' @source Gilks, W. R. and Wild, P. (1992) Adaptive Rejection Sampling for Gibbs Sampling. Appl.Statist., 41 337 - 348.
 #' @export
