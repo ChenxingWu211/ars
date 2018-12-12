@@ -3,7 +3,7 @@ library(RGeode)
 
 # This function takes a function and wraps it to be the log of the original function
 # Input: f_x: A function to be calculated
-# A wrapper function to access the logged function
+# Output: A wrapper function to access the logged function
 make_hx = function(f_x){
   h_x = function(x){
     log(f_x(x))
@@ -12,6 +12,11 @@ make_hx = function(f_x){
   return(h_x)
 }
 
+# This function calculates a z value for a given x_j and x_j+1
+# Input:  t_k: list of ordered x’s
+#         j: index of some element in t_k
+#         h_x: log of user inputted function
+# Output: A single value to compare a sample x value to
 calc_z_j = function(t_k, j, h_x){
   x_j = t_k[j]
   x_j_plus_1 = t_k[j + 1]
@@ -25,6 +30,11 @@ calc_z_j = function(t_k, j, h_x){
   return(z_j)
 }
 
+# This function fetches the needed index that will be used to get an x_j in the u_k function
+# Input:  t_k: list of ordered x’s 
+#         x_star: sample x
+#         h_x: log of inputted user function
+# Output: An index fetch the desired x_j when called in the u_k function 
 get_xj_uk = function(t_k, x_star, h_x){
   curr_idx = 1
   
@@ -40,6 +50,11 @@ get_xj_uk = function(t_k, x_star, h_x){
   return(length(t_k))
 }
 
+# This function finds the equation of an upper-hull line
+# Input:  t_k: list of ordered x’s
+#         x_star:sample x value
+#         h_x: log of user inputted function
+# Output: A function that gives the equation of thhe upper-hull line
 u_k = function(t_k, x_star, h_x){
   x_j = t_k[get_xj_uk(t_k, x_star, h_x)]
   
@@ -53,6 +68,10 @@ u_k = function(t_k, x_star, h_x){
   return(u_k_line)
 }
 
+# This function fetches the needed index that will be used to get an x_j in the l_k function
+# Input: 	t_k: list of ordered x’s 
+#         x_star: sample x
+# Output: An index in order to fetch the desired x_j when called in the l_k function 
 get_xj_lk = function(t_k, x_star){
   curr_idx = 2
   
@@ -68,6 +87,11 @@ get_xj_lk = function(t_k, x_star){
   return(curr_idx - 1)
 }
 
+# Find the equation of the lower-hull line
+# Input:  t_k: list of ordered x’s 
+#         x_star:sample x value
+#         h_x: log of user inputted function
+# Output: A function that gives the equation of the lower-hull line
 l_k = function(t_k, x_star, h_x){
   if (x_star < t_k[1]) {
     result <- list(is_finite = FALSE)
@@ -94,6 +118,14 @@ l_k = function(t_k, x_star, h_x){
   return(result)
 }
 
+# Finds the normalized density function s_k(x), and 
+# the integral value for each of the k exp(u_k(x)) sections
+# Input:  t_k: list of ordered x’s 
+#         h_x: log of user inputted function
+#         lower_bound: lower bound of function
+#         upper_bound: upper bound of function
+# Output: A list, where the first element is the s_k(x) function, and 
+#         the second contains a vector of k integral values.
 s_k = function(t_k, h_x, lower_bound, upper_bound){
   
   k = length(t_k)
@@ -167,6 +199,12 @@ s_k = function(t_k, h_x, lower_bound, upper_bound){
   return(list(s_k_func,integrals))
 }
 
+# Samples an x value randomly following the s_k(x) distribution
+# Input:  t_k: list of ordered x’s
+#         h_x: log of user inputted function
+#         lower_bound: lower bound of function
+#         upper_bound: upper bound of function
+# Output: A random x value sampled from the s_k(x) density
 sampler = function(t_k, h_x, lower_bound, upper_bound){
   k = length(t_k)
   s = s_k(t_k, h_x, lower_bound, upper_bound)
@@ -207,7 +245,11 @@ sampler = function(t_k, h_x, lower_bound, upper_bound){
   return(x)
 }
 
-
+# Finds reasonable starting points from the mid point of the boundary
+# Input:  h_x: log of user inputted function
+#         l_bound: lower bound
+#         u_bound: upper bound
+# Output: vector of length 2
 find_sp = function(h_x, l_bound, u_bound) {
   # Start finding from the mid point
   start_val = (u_bound - l_bound)/2 + l_bound
@@ -227,7 +269,12 @@ find_sp = function(h_x, l_bound, u_bound) {
   retval = list(x1 = x1, xk = xk)
   return(retval)
 }
-
+# does an approximate check to see if log(f(x)) is concave on the 
+# given domain (or a domain narrowed down by the check_boundary function) 
+# Input:  in_l: either user inputted lower bound or one found by the check_boundary function
+#         h_x: log of user-inputted function, found by make_hx
+#         in_u: either user inputted upper bound or one found by the check_boundary function
+# Output: A test whether user’s function is appropriate for the ARS algorithm
 check_boundary = function(in_l, in_u, h_x) {
   step = (in_u - in_l)/1000
   new_l = in_l
@@ -258,6 +305,12 @@ check_boundary = function(in_l, in_u, h_x) {
   return(retval)
 }
 
+# Determines whether the user inputted a function that is exponential or 
+# uniform, which leads to an alternative method of sampling
+# Input:  start_point: either from user input or from check_boundary function that gives the start of h_x’s domain
+#         h_x: log of inputted function, from make_h_x
+#         end_point: either from user input or from check_bounday function that gives the end of h_x’s domain
+# Output: a list with booleans indicating if unif or exp inputted
 is_unif_exp = function(start_point, h_x, end_point) {
   step = (end_point - start_point) / 1000
   x1 = start_point
@@ -325,6 +378,12 @@ is_unif_exp = function(start_point, h_x, end_point) {
   }
 }
 
+# does an approximate check to see if log(f(x)) is concave on the given 
+# domain (or a domain narrowed down by the check_boundary function) 
+# Input:  start_point: either user inputted lower bound or one found by the check_boundary function
+#         h_x: log of user-inputted function, found by make_hx
+#         end_point: either user inputted upper bound or one found by the check_boundary function
+# Output: A test whether user’s function is appropriate for the ARS algorithm
 is_concave = function(start_point, h_x, end_point) {
   step = (end_point - start_point)/100
   x1 = start_point
